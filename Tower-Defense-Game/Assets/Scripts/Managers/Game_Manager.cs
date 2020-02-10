@@ -71,9 +71,9 @@ public class Game_Manager : Singleton<Game_Manager>
     void Start ()
     {
         Lives = 10;
-        Currency = 50;	
+        Currency = 50;
 	}
-	
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -221,8 +221,54 @@ public class Game_Manager : Singleton<Game_Manager>
 
             activeMonsters.Add(monster);
 
-            yield return new WaitForSeconds(spawnWait);
-        }
+// monsters come out one by one/as a squad
+            if (wave<=10) {
+                yield return new WaitForSeconds(spawnWait);
+            }
+            else if(10<wave && wave<=20)
+            {
+                if (i % 2 != 0) {
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(spawnWait);
+                }
+            }
+            else if (20 < wave && wave <= 30)
+            {
+                if (i % 3 != 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(spawnWait);
+                }
+            }
+            else if (30 < wave && wave <= 40)
+            {
+                if (i % 4 != 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(spawnWait);
+                }
+            }
+            else
+            {
+                if (i % 5 != 0)
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(spawnWait);
+                }
+            }
+            // yield return new WaitForSeconds(spawnWait);        }
     }
 
     public void RemoveMonster(Monster monster)
@@ -241,7 +287,7 @@ public class Game_Manager : Singleton<Game_Manager>
         {
             gameOver = true;
             gameOverMenu.SetActive(true);
-        } 
+        }
     }
 
     public void ShowInGameMenu()

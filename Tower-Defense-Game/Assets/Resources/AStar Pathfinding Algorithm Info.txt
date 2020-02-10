@@ -1,0 +1,36 @@
+The AStar Algorithm will
+ - Look through the nodes to find the shortest path
+ - From A to B (start to goal)
+
+The AStar Algorithm needs two lists
+ - An open list: a list of nodes needed for close inspection
+ - A closed list: nodes that have already been examined; these nodes CAN end up as part of the final path
+
+The function below is used to select nodes for the final path
+F(x) = G(x) + H(x)
+G(x) -> The cost of moving from start to this node (ex. horizontal and vertical moves cost 10, and diagonal moves cost 14)
+G(x) is calculated by taking the cost of the parent and adding the cost of the move (10 or 14)
+H(x) -> The estimated price for moving from the node to the goal
+ - Is often referred to as heuristic
+ - It's a guess
+ - Obstacles are ignored
+ - Diagonal moves are ignored
+ - Multiply the length between the node and goal (horizontal, then vertical, not calculated diagonally) by 10
+
+AStar Algorithm Execution Steps
+1. Add the start node to the open list
+2. Look at the node's neighbors, ignore unwalkable nodes
+3. Add the neighbors to the open list
+4. Set the current node (start) as parent
+5. Move the current node from the open to the closed list
+6. Score the nodes (F, G, and H scores) as described earlier
+7. Continue the search by selecting the node with the lowest F score from the open list (if two F scores are the same, randomly choose one)
+8. Move the node from the open list to the closed list
+9.1 Examine all neighbors, ignore unwalkable nodes and nodes on the closed list
+9.2 Undiscovered neighbors are added to the open list
+9.3 Set the lowest F score node as parent to new nodes on the open list, and calculate F, G, and H values of new nodes
+9.4 Check all new neighbors on the open list: is the current node a better parent, specifically, is the G score lower if we use the current node as parent? 
+10. Continue the search from step 7 
+ - until the open list is empty (no path available)
+ - until the goal is added to the closed list (we found a path)
+ - the path can be found via backtracking

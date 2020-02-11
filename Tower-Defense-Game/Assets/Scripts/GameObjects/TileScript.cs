@@ -39,9 +39,10 @@ public class TileScript : MonoBehaviour {
 		
 	}
 
-    public void Setup(Point gridPos, Vector3 worldPos, Transform parent)
+    public void Setup(Point gridPos, Vector3 worldPos, Transform parent, bool walkable)
     {
-        Walkable = true;
+        //Walkable = true;
+        Walkable = walkable;
         IsEmpty = true;
         GridPosition = gridPos;
         transform.position = worldPos;

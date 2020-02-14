@@ -97,6 +97,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private void PlaceTile(string tileType, int x, int y, Vector3 worldStart)
     {
+    	//Debug.Log(">>>"+tileType+"<<<>>>"+tileType.Length+"<<<");
         int tileIndex = int.Parse(tileType);    // converts string tileType to integer version
 
         TileScript newTile = Instantiate(tiles[tileIndex]).GetComponent<TileScript>();

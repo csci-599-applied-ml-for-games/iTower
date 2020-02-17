@@ -98,9 +98,15 @@ public class LevelManager : Singleton<LevelManager>
     private void PlaceTile(string tileType, int x, int y, Vector3 worldStart)
     {
         int tileIndex = int.Parse(tileType);    // converts string tileType to integer version
+		bool walkable = true;
+        //Debug.Log(tileIndex);
+        if (tileIndex == 1)
+        {
+            walkable = false;
+        }
 
         TileScript newTile = Instantiate(tiles[tileIndex]).GetComponent<TileScript>();
-        newTile.Setup(new Point(x, y), new Vector3(worldStart.x + TileSize * x, worldStart.y - TileSize * y, 0f), map);
+        newTile.Setup(new Point(x, y), new Vector3(worldStart.x + TileSize * x, worldStart.y - TileSize * y, 0f), map, walkable);
     }
 
     private string[] ReadLevelText()

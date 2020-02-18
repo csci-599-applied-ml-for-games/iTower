@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Client;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -36,6 +37,11 @@ public class TileScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (ClientStat.placeTower)
+        {
+            PlaceTower();
+            ClientStat.placeTower = false;
+        }
 		
 	}
 
@@ -68,6 +74,7 @@ public class TileScript : MonoBehaviour {
             else if (Input.GetMouseButtonDown(0))    // 0 - left mouse
             {
                 PlaceTower();
+                
             }
         }
         else if (!EventSystem.current.IsPointerOverGameObject() && Game_Manager.Instance.ClickedBtn == null && Input.GetMouseButton(0))    // if the mouse is not over another game object and a tower has not been bought and the current tower that the mouse is hovering over has been clicked
@@ -101,9 +108,14 @@ public class TileScript : MonoBehaviour {
             return;
         }
 
-        GameObject tower = Instantiate(Game_Manager.Instance.ClickedBtn.TowerPrefab, transform.position, Quaternion.identity);
+        GameObject tower = Instantiate(Game_Manager.Instance.ClickedBtn.TowerPrefab, ClientStat.pos, Quaternion.identity);
         tower.GetComponent<SpriteRenderer>().sortingOrder = GridPosition.y;
+        
         tower.transform.SetParent(transform);
+        /*
+         * send coord of tower when placed
+         */
+        // OutputQueue.client.Send("tower placed at: "+transform.position.x+" "+transform.position.y);
 
         myTower = tower.transform.GetChild(0).GetComponent<Tower>();    // need to get the child here because the tower script is sitting on the range, which is the child of each tower
 
@@ -114,7 +126,7 @@ public class TileScript : MonoBehaviour {
         myTower.Price = Game_Manager.Instance.ClickedBtn.Price;
 
         Game_Manager.Instance.BuyTower();   // also sets the current button selected null so that the user cannot place an infinite number of towers after selecting a button 
-
+        
         Walkable = false;
     }
 

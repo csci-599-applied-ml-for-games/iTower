@@ -1,8 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using Client;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public enum Element { STORM, FIRE, ICE, POISON, NONE }  // types for the monsters, projectiles, and towers
 
@@ -62,23 +66,62 @@ public class Game_Manager : Singleton<Game_Manager>
 
     private float monsterHealth = 15;
 
+    public Button prisonBtn;
+    public Button nextWaveBtn;
+    
+    public ClientMain client = new ClientMain();
+    public MonsterJson monsJ = new MonsterJson();
+
     private void Awake()
     {
         Pool = GetComponent<ObjectPool>();
+        prisonBtn = GameObject.Find("Canvas/TowerPanel/PoisonBtn").GetComponent<Button>();
+        client.init();
     }
 
     // Use this for initialization
     void Start ()
     {
+        /*
+         * init lives
+         */
         Lives = 10;
-        Currency = 50;	
-	}
-	
-	// Update is called once per frame
+        /*
+         * init money
+         */
+        Currency = 50;
+        client.send("ok");
+
+       
+
+    }
+
+    // Update is called once per frame
 	void Update ()
     {
+        
         HandleEscape();
-	}
+
+        if (!ClientStat.finishTower)
+        {
+            prisonBtn.onClick.Invoke();
+            ClientStat.finishTower = true;
+        }
+
+        if (ClientStat.nextWave)
+        {
+            nextWaveBtn = GameObject.Find("Canvas/NextWave").GetComponent<Button>();
+            nextWaveBtn.onClick.Invoke();
+            ClientStat.nextWave = false;
+        }
+
+        if (ClientStat.sendJson)
+        {
+            client.writeJson();
+            ClientStat.sendJson = false;
+        }
+
+    }
 
     public void PickTower(TowerBtn towerBtn)    // triggered with Unity's button OnClick() event
     {
@@ -86,6 +129,10 @@ public class Game_Manager : Singleton<Game_Manager>
         {
             ClickedBtn = towerBtn;
             Hover.Instance.Activate(towerBtn.Sprite);
+            /*
+             * send message: pick tower
+             */
+            client.send("pick tower");
         }
     }
 
@@ -95,6 +142,11 @@ public class Game_Manager : Singleton<Game_Manager>
         {
             Currency -= ClickedBtn.Price;
             Hover.Instance.Deactivate();
+            /*
+             * buy tower, send data
+             */
+            client.send("buy tower, money left: "+Currency);
+            // ClientStat.money = Currency;
         }
     }
 
@@ -103,6 +155,7 @@ public class Game_Manager : Singleton<Game_Manager>
         if (Changed != null)
         {
             Changed();
+            // ClientStat.money = Currency;
         }
     }
 
@@ -171,6 +224,7 @@ public class Game_Manager : Singleton<Game_Manager>
                 ShowInGameMenu();
             }
         }
+        
     }
 
     public void StartWave()
@@ -186,7 +240,8 @@ public class Game_Manager : Singleton<Game_Manager>
     private IEnumerator SpawnWave()
     {
         LevelManager.Instance.GeneratePath();
-
+        
+        ClientStat.monsterList.Clear();
         // current wave functionality: number of monsters to spawn is equal to the wave number per wave
         for (int i = 0; i < wave; i++)
         {
@@ -209,10 +264,21 @@ public class Game_Manager : Singleton<Game_Manager>
                     type = "PurpleMonster";
                     break;
             }
-
+            /*
+             * create monster
+             */
             Monster monster = Pool.GetObject(type).GetComponent<Monster>();
 
             monster.Spawn(monsterHealth);
+            
+            /*
+            * send path of monster
+            */
+            // client.sendPath(ClientStat.finalPath);
+            // client.send(client.toStackString(ClientStat.finalPath));
+            monsJ.type = monsterIndex;
+            monsJ.posList = client.toStackList(ClientStat.finalPath);
+            ClientStat.monsterList.Add(monsJ);
 
             if (wave % 3 == 0)
             {
@@ -232,6 +298,12 @@ public class Game_Manager : Singleton<Game_Manager>
         if (!WaveActive && !gameOver)
         {
             waveBtn.SetActive(true);
+            /*
+             * send json
+             */
+            ClientStat.money = Currency;
+            ClientStat.lives = Instance.Lives;
+            ClientStat.sendJson = true;
         }
     }
 

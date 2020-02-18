@@ -1,11 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using Client;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu, optionsMenu;
+    public Button playBtn;
+    
+    private void Awake()
+    {
+        playBtn = GameObject.Find("Canvas/MainMenu/Buttons/Play").GetComponent<Button>();
+        
+    }
+
+    private void Start()
+    {
+        playBtn.onClick.Invoke();
+        
+    }
 
     public void Options()
     {
@@ -28,6 +42,12 @@ public class MainMenu : MonoBehaviour
 
     public void Play()
     {
+        /*
+         * main scene
+         */
         SceneManager.LoadScene(1);
+        /*
+         * send message to python
+         */
     }
 }

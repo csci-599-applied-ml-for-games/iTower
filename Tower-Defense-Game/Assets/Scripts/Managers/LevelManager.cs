@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Client;
 using UnityEngine;
 
 public class LevelManager : Singleton<LevelManager>
@@ -11,7 +12,7 @@ public class LevelManager : Singleton<LevelManager>
         get { return tiles[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x; }
     }
 
-    [SerializeField] private GameObject[] tiles;
+    [SerializeField] private GameObject[] tiles;    
     [SerializeField] private CameraMovement cameraMovement;
     [SerializeField] private Transform map;
 
@@ -22,9 +23,18 @@ public class LevelManager : Singleton<LevelManager>
 
     private Point mapSize;
 
+    /*
+     * path (stack)
+     */
     private Stack<Node> path;
+    /*
+     * get/set of path
+     */
     public Stack<Node> Path
     {
+        /*
+         * get path
+         */
         get
         {
             if (path == null)
@@ -53,7 +63,7 @@ public class LevelManager : Singleton<LevelManager>
             return redSpawn;
         }
     }
-
+    
     // Use this for initialization
     void Start()
     {
@@ -128,8 +138,16 @@ public class LevelManager : Singleton<LevelManager>
         return position.x >= 0 && position.y >= 0 && position.x < mapSize.x && position.y < mapSize.y;
     }
 
+    /*
+     * generate path using Astar
+     */
     public void GeneratePath()
     {
+        /*
+         * return finalPath (stack)
+         */
         path = AStar.GetPath(BlueSpawn, RedSpawn);
+        ClientStat.finalPath = path;
+
     }
 }

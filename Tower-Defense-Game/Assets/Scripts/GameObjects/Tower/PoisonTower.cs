@@ -20,6 +20,7 @@ public class PoisonTower : Tower
             {
                 new TowerUpgrade(2,1,0.5f,5,-0.2f,1),
                 new TowerUpgrade(5,1,0.5f,5,-0.2f,1),
+                new TowerUpgrade(5,1000,0.5f,5,-0.2f,1)
             };
     }
 

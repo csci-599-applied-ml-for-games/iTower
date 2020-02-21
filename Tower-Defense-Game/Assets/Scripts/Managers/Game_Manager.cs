@@ -70,9 +70,24 @@ public class Game_Manager : Singleton<Game_Manager>
     // Use this for initialization
     void Start ()
     {
-        Lives = 10;
-        Currency = 50;	
-	}
+        TextAsset gameData = Resources.Load("GameData") as TextAsset;
+        string gameDataTxt = gameData.ToString();
+        string[] gameDataTxt2 = gameDataTxt.Split(',');
+
+        //Debug.Log(gameDataTxt2[0]);
+        //Debug.Log(gameDataTxt2[1]);
+
+        int lives_val = int.Parse(gameDataTxt2[0]);
+        int currency_val = int.Parse(gameDataTxt2[1]);
+
+        //Debug.Log(lives_val);
+        //Debug.Log(currency_val);
+
+        //Lives = 10;
+        //Currency = 50;
+        Lives = lives_val;
+        Currency = currency_val;
+    }
 	
 	// Update is called once per frame
 	void Update ()

@@ -14,7 +14,8 @@ public class IceTower : Tower
         Upgrades = new TowerUpgrade[]
             {
                 new TowerUpgrade(2,1,1,2,10f),
-                new TowerUpgrade(2,1,1,2,20f)
+                new TowerUpgrade(2,1,1,2,20f),
+                new TowerUpgrade(5,1000,1,2,20f)
             };
     }
 

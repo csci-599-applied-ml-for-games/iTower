@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Client;
+using Bean;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
@@ -77,8 +77,6 @@ public class Monster : MonoBehaviour
             Game_Manager.Instance.Lives--;
             Release();
             // OutputQueue.client.Send("lives left: "+Game_Manager.Instance.Lives);
-            // ClientStat.lives = Game_Manager.Instance.Lives;
-            // ClientStat.sendJson = true;
         }
     }
 

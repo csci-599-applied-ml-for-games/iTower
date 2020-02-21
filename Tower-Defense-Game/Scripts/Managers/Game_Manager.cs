@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Bean;
 using Client;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -67,78 +68,50 @@ public class Game_Manager : Singleton<Game_Manager>
     private float monsterHealth = 15;
 
     public Button prisonBtn;
-    public Button nextWaveBtn;
+    public ClientControl client;
+    public string receivedMsg;
     
-    public ClientMain client = new ClientMain();
-    public MonsterJson monsJ = new MonsterJson();
-
     private void Awake()
     {
         Pool = GetComponent<ObjectPool>();
         prisonBtn = GameObject.Find("Canvas/TowerPanel/PoisonBtn").GetComponent<Button>();
-        client.init();
+        client = new ClientControl();
+        client.Connect("127.0.0.1",8080);
     }
 
     // Use this for initialization
     void Start ()
     {
-        TextAsset gameData = Resources.Load("GameData") as TextAsset;
-        string gameDataTxt = gameData.ToString();
-        string[] gameDataTxt2 = gameDataTxt.Split(',');
-
-        //Debug.Log(gameDataTxt2[0]);
-        //Debug.Log(gameDataTxt2[1]);
-
-        int lives_val = int.Parse(gameDataTxt2[0]);
-        int currency_val = int.Parse(gameDataTxt2[1]);
-
-        //Debug.Log(lives_val);
-        //Debug.Log(currency_val);
-
-        //Lives = 10;
-        //Currency = 50;
-        Lives = lives_val;
-        Currency = currency_val;
-
-
         /*
-         * init lives xunuo part
+         * init lives
          */
-        //Lives = 10;
+        Lives = 10;
         /*
-         * init money xunuo part
+         * init money
          */
-        //Currency = 50;
-        client.send("ok");
-
-       
+        Currency = 50;
+        
+        
 
     }
 
     // Update is called once per frame
-
 	void Update ()
     {
         
         HandleEscape();
-
-        if (!ClientStat.finishTower)
+        
+        if (!client.Receive().Equals("") && !ClientStat.finishTower)
         {
+            if (client.Receive().Equals("finish"))
+            {
+                ClientStat.finishTower = true;
+            }
+            string[] str = receivedMsg.Split(',');
+            float[] floats = Array.ConvertAll(str, float.Parse);
+            ClientStat.pos = new Vector3(floats[0], floats[1], 0f);
             prisonBtn.onClick.Invoke();
-            ClientStat.finishTower = true;
-        }
-
-        if (ClientStat.nextWave)
-        {
-            nextWaveBtn = GameObject.Find("Canvas/NextWave").GetComponent<Button>();
-            nextWaveBtn.onClick.Invoke();
-            ClientStat.nextWave = false;
-        }
-
-        if (ClientStat.sendJson)
-        {
-            client.writeJson();
-            ClientStat.sendJson = false;
+            ClientStat.placeTower = true;
         }
 
     }
@@ -152,7 +125,7 @@ public class Game_Manager : Singleton<Game_Manager>
             /*
              * send message: pick tower
              */
-            client.send("pick tower");
+            client.Send("pick tower");
         }
     }
 
@@ -165,8 +138,7 @@ public class Game_Manager : Singleton<Game_Manager>
             /*
              * buy tower, send data
              */
-            client.send("buy tower, money left: "+Currency);
-            // ClientStat.money = Currency;
+            client.Send("buy tower, money left: "+Currency);
         }
     }
 
@@ -175,7 +147,6 @@ public class Game_Manager : Singleton<Game_Manager>
         if (Changed != null)
         {
             Changed();
-            // ClientStat.money = Currency;
         }
     }
 
@@ -260,8 +231,7 @@ public class Game_Manager : Singleton<Game_Manager>
     private IEnumerator SpawnWave()
     {
         LevelManager.Instance.GeneratePath();
-        
-        ClientStat.monsterList.Clear();
+
         // current wave functionality: number of monsters to spawn is equal to the wave number per wave
         for (int i = 0; i < wave; i++)
         {
@@ -294,11 +264,7 @@ public class Game_Manager : Singleton<Game_Manager>
             /*
             * send path of monster
             */
-            // client.sendPath(ClientStat.finalPath);
-            // client.send(client.toStackString(ClientStat.finalPath));
-            monsJ.type = monsterIndex;
-            monsJ.posList = client.toStackList(ClientStat.finalPath);
-            ClientStat.monsterList.Add(monsJ);
+            client.sendPath(ClientStat.finalPath);
 
             if (wave % 3 == 0)
             {
@@ -318,12 +284,6 @@ public class Game_Manager : Singleton<Game_Manager>
         if (!WaveActive && !gameOver)
         {
             waveBtn.SetActive(true);
-            /*
-             * send json
-             */
-            ClientStat.money = Currency;
-            ClientStat.lives = Instance.Lives;
-            ClientStat.sendJson = true;
         }
     }
 

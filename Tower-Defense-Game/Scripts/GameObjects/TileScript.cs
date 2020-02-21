@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Bean;
 using Client;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -37,7 +38,7 @@ public class TileScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (ClientStat.placeTower)
+        if (ClientStat.placeTower==true)
         {
             PlaceTower();
             ClientStat.placeTower = false;
@@ -45,10 +46,9 @@ public class TileScript : MonoBehaviour {
 		
 	}
 
-    public void Setup(Point gridPos, Vector3 worldPos, Transform parent, bool walkable)
+    public void Setup(Point gridPos, Vector3 worldPos, Transform parent)
     {
-        //Walkable = true;
-        Walkable = walkable;
+        Walkable = true;
         IsEmpty = true;
         GridPosition = gridPos;
         transform.position = worldPos;

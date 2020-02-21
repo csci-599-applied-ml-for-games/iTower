@@ -1,5 +1,5 @@
 ﻿using System;
-using Client;
+using Bean;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,17 +8,14 @@ public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu, optionsMenu;
     public Button playBtn;
-    
     private void Awake()
     {
         playBtn = GameObject.Find("Canvas/MainMenu/Buttons/Play").GetComponent<Button>();
-        
     }
 
     private void Start()
     {
         playBtn.onClick.Invoke();
-        
     }
 
     public void Options()

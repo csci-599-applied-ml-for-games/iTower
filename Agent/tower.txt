@@ -1,0 +1,10 @@
+{"tower_list": [{"x": 2, "y": -1, "type": 2}]}
+{"tower_list": [{"x": -2, "y": -1, "type": 2}]}
+{"tower_list": [{"x": -4, "y": 4, "type": 0}]}
+{"tower_list": [{"x": 0, "y": -2, "type": 1}]}
+{"tower_list": [{"x": 2, "y": -2, "type": 0}]}
+{"tower_list": [{"x": -5, "y": 4, "type": 0}]}
+{"tower_list": [{"x": 2, "y": 0, "type": 2}]}
+{"tower_list": [{"x": 0, "y": 2, "type": 1}]}
+{"tower_list": [{"x": 0, "y": 0, "type": 1}]}
+{"tower_list": [{"x": 3, "y": 1, "type": 3}]}
